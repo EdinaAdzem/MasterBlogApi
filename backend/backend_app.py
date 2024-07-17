@@ -1,8 +1,24 @@
 from flask import Flask, jsonify, request
+from flask_swagger_ui import get_swaggerui_blueprint
 from flask_cors import CORS
 
-app = Flask(__name__)
-CORS(app)  # This will enable CORS for all routes
+app = Flask(__name__, static_url_path='/custom_static', static_folder='../frontend/static')
+CORS(app)
+
+# Swagger UI setup
+SWAGGER_URL = "/api/docs"
+API_URL = "/custom_static/masterblog.json"
+
+swagger_ui_blueprint = get_swaggerui_blueprint(
+    SWAGGER_URL,
+    API_URL,
+    config={
+        'app_name': 'Masterblog API'
+    }
+)
+app.register_blueprint(swagger_ui_blueprint, url_prefix=SWAGGER_URL)
+
+
 
 POSTS = [
     {"id": 1, "title": "First post", "content": "This is the first post."},
@@ -12,7 +28,18 @@ POSTS = [
 
 @app.route('/api/posts', methods=['GET'])
 def get_posts():
-    return jsonify(POSTS)
+    #adding sort
+    sort = request.args.get('sort')
+    direction = request.args.get('direction', 'asc')
+    sorted_posts = POSTS[:]
+
+    #check and sort
+    if sort in ['title','content']:
+        reverse = direction == 'desc'
+        sorted_posts = sorted(sorted_posts, key=lambda x: x[sort].lower(), reverse=reverse)
+
+
+    return jsonify(sorted_posts)
 
 
 @app.route('/api/posts', methods=['POST'])
