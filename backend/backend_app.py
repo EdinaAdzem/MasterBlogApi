@@ -71,5 +71,21 @@ def update_post(post_id):
         return jsonify({"Some Error": f"post id {post_id}does not exist"}), 404
 
 
+@app.route('/api/posts/search/<string:title>/<string:content>', methods=['GET'])
+def search_post(title, content):
+    searched_items = []
+    for item in title, content:
+        item['title'] = item.get('title', item['title'])  # update title
+        item['content'] = item.get('content', item['content'])  # update content
+        return searched_items.append(item)
+        break
+
+
+    if searched_items:
+        return jsonify(searched_items), 200
+    else:
+        return jsonify({"Some Error": f"post id {item}does not exist"}), 404
+
+
 if __name__ == '__main__':
     app.run(host="0.0.0.0", port=5002, debug=True)
