@@ -41,8 +41,8 @@ def add_post():
 #delete endpoint
 @app.route('/api/posts/<int:post_id>', methods=['DELETE'])
 def delete_post(post_id):
+    """delete post endpoint"""
     global POSTS
-
     #first attempt to find the post
     for post in POSTS:
         if post['id'] == post_id:
@@ -50,6 +50,16 @@ def delete_post(post_id):
             return jsonify({"message": f"Post  id {post_id} has been deleted successfully."}), 200
         #handle user entering the wrong id
     return jsonify({"error": f"Post id {post_id} does not exist!!!."}), 404
+
+@app.route('/api/posts/<int:post_id>', methods=['UPDATE'])
+def update_post(post_id):
+    data = request.get_json()
+    update_post =None
+
+    #locate the posts
+    #perform the update on the title
+    #perform the update on the content
+    #handle the errors
 
 
 
