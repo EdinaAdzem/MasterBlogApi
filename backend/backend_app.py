@@ -1,5 +1,6 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 from flask_cors import CORS
+
 
 app = Flask(__name__)
 CORS(app)  # This will enable CORS for all routes
@@ -13,6 +14,29 @@ POSTS = [
 @app.route('/api/posts', methods=['GET'])
 def get_posts():
     return jsonify(POSTS)
+
+
+@app.route('/api/posts', methods=['POST'])
+def add_post():
+    """add post endpoint"""
+    data = request.get_json()
+    if 'title' not in data or 'content' not in data:
+        missing_fields = []
+        if 'title' not in data:
+            missing_fields.append('title')
+        if 'content' not in data:
+            missing_fields.append('content')
+        return jsonify({"error": f"Missing fields: {', '.join(missing_fields)}"}), 400 #handle errors
+
+    # add a new post
+    new_id = max(post['id'] for post in POSTS) + 1 if POSTS else 1
+    new_post = {
+        "id": new_id,
+        "title": data['title'],
+        "content": data['content']
+    }
+    POSTS.append(new_post)
+    return jsonify(new_post), 201
 
 
 if __name__ == '__main__':
