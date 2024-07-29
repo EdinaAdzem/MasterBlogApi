@@ -81,15 +81,17 @@ def delete_post(post_id):
 
 @app.route('/api/posts/<int:post_id>', methods=['PUT'])
 def update_post(post_id):
+    """update endpoint"""
     data = request.get_json()
-    update_post = None
+    updated_post = None
 
     # locate the posts
     for post in POSTS:
-        post['title'] = data.get('title', post['title'])  # update title
-        post['content'] = data.get('content', post['content'])  # update content
-        updated_post = post
-        break
+        if post['id'] == post_id:  # check if each post id matches the post_id parameter.
+            post['title'] = data.get('title', post['title'])  # update title
+            post['content'] = data.get('content', post['content'])  # update content
+            updated_post = post
+            break
 
     # handle the errors
     if updated_post:
@@ -100,6 +102,7 @@ def update_post(post_id):
 
 @app.route('/api/posts/search', methods=['GET'])
 def search_post():
+    """search endpoint"""
     title = request.args.get('title')
     content = request.args.get('content')
 
